@@ -1,26 +1,37 @@
-/**************************************************************************************************
- * Copyright (c) 2019 Xiaoyang Xu, Masoud Ghaffarinia, Wenhao Wang, Kevin W. Hamlen, Zhiqiang Lin *
- *                                                                                                *
- * Permission is hereby granted, free of charge, to any person obtaining a copy of this software  *
- * and associated documentation files (the "Software"), to deal in the Software without           * 
- * restriction, including without limitation the rights to use, copy, modify, merge, publish,     *
- * distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the  *
- * Software is furnished to do so, subject to the following conditions:                           *
- *                                                                                                *
- * The above copyright notice and this permission notice shall be included in all copies or       *
- * substantial portions of the Software.                                                          *
- *                                                                                                *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING  *
- * BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND     *
- * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,   *
- * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, *
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.        *
- **************************************************************************************************/
+/*************************************************************************************
+ * Copyright (c) 2019 Xiaoyang Xu, Masoud Ghaffarinia, Wenhao Wang, and Kevin Hamlen *
+ * The University of Texas at Dallas                                                 *
+ *                                                                                   *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of   * 
+ * this software and associated documentation files (the "Software"), to deal in     *
+ * the Software without restriction, including without limitation the rights to      *
+ * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of  *
+ * the Software, and to permit persons to whom the Software is furnished to do so,   *
+ * subject to the following conditions:                                              *
+ *                                                                                   * 
+ * The above copyright notice and this permission notice shall be included in all    *
+ * copies or substantial portions of the Software.                                   *
+ *                                                                                   *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR        *
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS  *
+ * FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR    *
+ * COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER    *
+ * IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN           *
+ * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.        *
+ *************************************************************************************/
+ 
+/* This file is part of the ConFIRM test suite, whose initial documentation can be
+   found in the following publication:
 
-// This micro benchmark emulates a specific Windows API hooking behavior observed in various
-// component-driven software, including Microsoft Office software. Please see the ConFIRM 
-// paper for detailed explanation. This benchmark redirects functoin NtClose to a wrapper 
-// function, to show this API hooking behavior.
+   Xiaoyang Xu, Masoud Ghaffarinia, Wenhao Wang, Kevin W. Hamlen, and Zhiqiang Lin.
+   "ConFIRM: Evaluating Compatibility and Relevance of Control-flow Integrity 
+   Protections for Modern Software."  In Proceedings of the 28th USENIX Security
+   Symposium, August 2019. */
+
+// This micro benchmark emulates a specific Windows API hooking behavior observed in 
+// various component-driven software, including Microsoft Office software. Please 
+// see the ConFIRM paper for detailed explanation. This benchmark redirects function 
+// NtClose to a wrapper function, to show this API hooking behavior.
 
 #pragma warning( disable : 4005)
 #include "helper.h"
@@ -69,7 +80,12 @@ int main(void) {
     }
 
     // Allocate memory for realNtClose.
-    realNtClose = (FARPROC)VirtualAlloc(NULL, dwPageSize, MEM_COMMIT | MEM_RESERVE, PAGE_EXECUTE_READWRITE);
+    realNtClose = (FARPROC)VirtualAlloc(
+        NULL, 
+        dwPageSize, 
+        MEM_COMMIT | MEM_RESERVE, 
+        PAGE_EXECUTE_READWRITE
+        );
     if (!realNtClose)
     {
         printf("VirtualAlloc() failed allocating for realNtClose()");
@@ -81,9 +97,9 @@ int main(void) {
 
     // Write to realNtClose. 
     // After writing:
-    // realNtClose      ->    mov eax, 0c        (same to the first 5 bytes of NtClose)
-    // realNtClose+5    ->    jmp pNtClose+5     (xor ecx, ecx)
-    //                        INT                (should never executed)
+    // realNtClose   -> mov eax, 0c    (same to the first 5 bytes of NtClose)
+    // realNtClose+5 -> jmp pNtClose+5 (xor ecx, ecx)
+    //                  INT            (should never executed)
     __asm {
         // Copy the first 4 bytes from NtClose (in ntdll) to realNtClose.
         mov esi, pNtClose
@@ -118,8 +134,8 @@ int main(void) {
 
     // Write the fst 5 bytes of ntdll::NtClose to force it jump to hookedNtClose.
     // After writing:
-    // pNtClose        ->    jmp hookedNtClose
-    // pNtClose+5      ->    xor ecx, ecx
+    // pNtClose   -> jmp hookedNtClose
+    // pNtClose+5 -> xor ecx, ecx
     //             ... 
     __asm {
         mov edi, pNtClose
