@@ -28,7 +28,7 @@
    Protections for Modern Software."  In Proceedings of the 28th USENIX Security
    Symposium, August 2019. */
 
-#include "helper.h"
+#include "setup.h"
 
 static int count_0 = 0, count_1 = 0, count_2 = 0;
 NANOSECOND start_time;
