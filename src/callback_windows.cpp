@@ -1,23 +1,34 @@
-/**************************************************************************************************
- * Copyright (c) 2019 Xiaoyang Xu, Masoud Ghaffarinia, Wenhao Wang, Kevin W. Hamlen, Zhiqiang Lin *
- *                                                                                                *
- * Permission is hereby granted, free of charge, to any person obtaining a copy of this software  *
- * and associated documentation files (the "Software"), to deal in the Software without           * 
- * restriction, including without limitation the rights to use, copy, modify, merge, publish,     *
- * distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the  *
- * Software is furnished to do so, subject to the following conditions:                           *
- *                                                                                                *
- * The above copyright notice and this permission notice shall be included in all copies or       *
- * substantial portions of the Software.                                                          *
- *                                                                                                *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING  *
- * BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND     *
- * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,   *
- * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, *
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.        *
- **************************************************************************************************/
+/*************************************************************************************
+ * Copyright (c) 2019 Xiaoyang Xu, Masoud Ghaffarinia, Wenhao Wang, and Kevin Hamlen *
+ * The University of Texas at Dallas                                                 *
+ *                                                                                   *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of   * 
+ * this software and associated documentation files (the "Software"), to deal in     *
+ * the Software without restriction, including without limitation the rights to      *
+ * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of  *
+ * the Software, and to permit persons to whom the Software is furnished to do so,   *
+ * subject to the following conditions:                                              *
+ *                                                                                   * 
+ * The above copyright notice and this permission notice shall be included in all    *
+ * copies or substantial portions of the Software.                                   *
+ *                                                                                   *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR        *
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS  *
+ * FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR    *
+ * COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER    *
+ * IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN           *
+ * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.        *
+ *************************************************************************************/
+ 
+/* This file is part of the ConFIRM test suite, whose initial documentation can be
+   found in the following publication:
 
-#include "helper.h"
+   Xiaoyang Xu, Masoud Ghaffarinia, Wenhao Wang, Kevin W. Hamlen, and Zhiqiang Lin.
+   "ConFIRM: Evaluating Compatibility and Relevance of Control-flow Integrity 
+   Protections for Modern Software."  In Proceedings of the 28th USENIX Security
+   Symposium, August 2019. */
+
+#include "setup.h"
 
 static int count_1 = 0, count_2 = 0, count_3 = 0;
 NANOSECOND start_time;
@@ -47,8 +58,8 @@ int main()
         // DWORD                   dwCreationFlags,
         // LPDWORD                 lpThreadId
     // );    
-    // The CreateThread() API (signature above) takes a callback pointer (lpStartAddress)
-    // that points to a application-defined function to be executed by the new created thread.
+    // The CreateThread() API takes a callback pointer (lpStartAddress) that points
+    // to a napplication-defined function to be executed by the new created thread.
     
     // Create threads and wait for them to terminate in an intensive loop.
     for (long long int i = 0; i < MAX_LOOP * CALTS; i++)
@@ -57,7 +68,7 @@ int main()
         h2 = CreateThread(NULL, 0, theadProc2, NULL, 0, NULL);
         h3 = CreateThread(NULL, 0, theadProc3, NULL, 0, NULL);
 
-        // Wait for the treads to terminate and close handles.		
+        // Wait for the treads to terminate and close handles.        
         handles[0] = h1;
         handles[1] = h2;
         handles[2] = h3;
@@ -73,7 +84,7 @@ int main()
 
     // Print time elapsed in the loop.  
     printf("total time in nanoseconds is %llu\n", (long long unsigned int) total_time);
-	
+    
     // Print counts so that a compiler doesn't optimize too much.
     printf("%d, %d, %d", count_1, count_2, count_3);
 
