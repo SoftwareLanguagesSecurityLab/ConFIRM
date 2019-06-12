@@ -99,3 +99,8 @@
 #define BILLION 1000000000L
 extern NANOSECOND get_wall_time();
 
+// Pre-defined compiler macros for x86/x64
+#define INTELX86 i386 | __i386 | __i386__ | __i386__ | __i486__ | __i586__ \
+| __i686__ | __i386 | __IA32__ | _M_IX86 | _M_IX86 | __X86__ | _X86_ \
+| __THW_INTEL__ | __I86__ | __I86__ | __INTEL__ | __386
+#define AMD64 __amd64__ | __amd64 | __x86_64__ | __x86_64 | _M_X64 | _M_AMD64
