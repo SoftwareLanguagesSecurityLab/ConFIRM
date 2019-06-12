@@ -34,7 +34,7 @@
 // NtClose to a wrapper function, to show this API hooking behavior.
 
 #pragma warning( disable : 4005)
-#include "helper.h"
+#include "setup.h"
 #include <NTSTATUS.H>
 
 // Make realNtClose a global variable as it's delared in AppvIsvSubsystems32.dll
