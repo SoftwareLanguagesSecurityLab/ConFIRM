@@ -53,14 +53,14 @@ int main()
     CoInitialize(NULL);
     
     // CoCreateInstance() obtains an object reference (pad) of ActiveDesktop. And 
-	// later QueryInterface() obtains a new interface (puk) to ActiveDesktop.
+    // later QueryInterface() obtains a new interface (puk) to ActiveDesktop.
     hres = CoCreateInstance(
-		CLSID_ActiveDesktop, 
-		NULL, 
-		CLSCTX_INPROC_SERVER, 
-		IID_IActiveDesktop, 
-		(LPVOID*)&pad
-	);
+        CLSID_ActiveDesktop, 
+        NULL, 
+        CLSCTX_INPROC_SERVER, 
+        IID_IActiveDesktop, 
+        (LPVOID*)&pad
+    );
 
     if (SUCCEEDED(hres))
     {
@@ -70,10 +70,10 @@ int main()
         scanf("%s", buffer);
 
         // CFI solutions guarantee that the following function call targets a valid
-		// QueryInterface(). Unfortunately, every implementation of QueryInterface()
-		// calls other virtual functions (e.g. AddRef) by default. With the above
-		// data corruption vulnerability, an attacker can tailer counterfeit object
-		// and then redirect control flow to arbitrary code. 
+        // QueryInterface(). Unfortunately, every implementation of QueryInterface()
+        // calls other virtual functions (e.g. AddRef) by default. With the above
+        // data corruption vulnerability, an attacker can tailer counterfeit object
+        // and then redirect control flow to arbitrary code. 
         IPersistFile* puk;
         hres = pad-> QueryInterface(IID_IUnknown, (LPVOID*)&puk);
         if (SUCCEEDED(hres))
