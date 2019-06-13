@@ -38,7 +38,7 @@ static int finally_count = 0;
 
 int main()
 {
-	// Throw access violation exception and handle it using SEH in an intensive loop, 
+    // Throw access violation exception and handle it using SEH in an intensive loop, 
     // to see if a CFI solution being tested provides semantic transparency.
     for (long long int i = 0; i < MAX_LOOP * SEHTS; ++i)
     {
@@ -52,10 +52,10 @@ int main()
             except_count++;
         }
     }
-	
-	// Print results.
+    
+    // Print results.
     printf("except_count is %d\nfinally_count is %d\n ", except_count++, finally_count);
-	printf("SEH test passed.");
+    printf("SEH test passed.");
 
     return 0;
 }
