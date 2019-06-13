@@ -30,11 +30,11 @@
 
 #include "setup.h"
 
-#ifdef AMD64
+#ifdef INTEL_X86
 //
-#elif INTEL_X86
-#error This benchmark is designed for x64 architecture only. For x86, please use \
- multithreading_linux32.cpp instead.
+#elif AMD64
+#error This benchmark is designed for x86 architecture only. For x64, please use \
+multithreading_linux64.cpp instead.
 #else
 #error This benchmark contains x86/x64-specific assembly code that may be \
 incompatible with the current hardware architecture.
