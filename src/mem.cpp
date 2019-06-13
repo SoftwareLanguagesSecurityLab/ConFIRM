@@ -30,7 +30,7 @@
 
 #include "setup.h"
 
-#if !(defined INTEL_X86 | AMD64)
+#if !(defined INTEL_X86 || AMD64)
 #error This benchmark contains x86/x64-specific assembly code that may be \
 incompatible with the current hardware architecture.
 #endif
