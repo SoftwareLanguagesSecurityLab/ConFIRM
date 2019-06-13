@@ -108,3 +108,16 @@ extern NANOSECOND get_wall_time();
 #if defined(i386) || defined(__i386__) || defined(__i486__) || defined(__i586__) || defined(__i686__) || defined(__i386) || defined(__IA32__) || defined(_M_IX86) || defined(__X86__) || defined(_X86_) || defined(__I86__) || defined(__INTEL__) || defined(__386) || defined(__THW_INTEL__)
 #define INTEL_X86
 #endif
+
+// Pre-defined compiler macros for processor architectures supported by different compilers.
+#if defined(_M_ALPHA) || defined(_M_AMD64) || defined(_M_X64) || defined(_M_ARM) || defined(_M_ARMT) || defined(_M_I86) || defined(_M_IX86) || defined(_M_IA64) || defined(_M_PPC)
+#define MSVC_ARCH
+#endif
+
+#if defined(__alpha__) || defined(__amd64__) || defined(__amd64) || defined(__x86_64__) || defined(__x86_64) || defined(__arm__) || defined(__thumb__) || defined(__aarch64__) || defined(__bfin) || defined(__BFIN__) || defined(__convex__) || defined(__hppa__) || defined(i386) || defined(__i386) || defined(__i386__) || defined(__i486__) || defined(__i586__) || defined(__i686__) || defined(__ia64__) || defined(_IA64) || defined(__IA64__) || defined(__m68k__) || defined(__mips__) || defined(mips) || defined(__mips) || defined(__powerpc) || defined(__powerpc__) || defined(__powerpc64__) || defined(__POWERPC__) || defined(__ppc__) || defined(__ppc64__) || defined(__PPC__) || defined(__PPC64__) || defined(_ARCH_PPC) || defined(_ARCH_PPC64) || defined(__sparc__) || defined(__sparc_v8__) || defined(__sparc_v9__) || defined(__sh__) || defined(__s390__) || defined(__s390x__)
+#define GNU_ARCH
+#endif
+
+#if defined(__zarch__) || defined(__x86_64__) || defined(__ARM_ARCH) || defined(__arm__) || defined(__aarch64__)
+#define CLANG_ARCH
+#endif
