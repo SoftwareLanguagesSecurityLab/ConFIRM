@@ -1,23 +1,43 @@
-/**************************************************************************************************
- * Copyright (c) 2019 Xiaoyang Xu, Masoud Ghaffarinia, Wenhao Wang, Kevin W. Hamlen, Zhiqiang Lin *
- *                                                                                                *
- * Permission is hereby granted, free of charge, to any person obtaining a copy of this software  *
- * and associated documentation files (the "Software"), to deal in the Software without           * 
- * restriction, including without limitation the rights to use, copy, modify, merge, publish,     *
- * distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the  *
- * Software is furnished to do so, subject to the following conditions:                           *
- *                                                                                                *
- * The above copyright notice and this permission notice shall be included in all copies or       *
- * substantial portions of the Software.                                                          *
- *                                                                                                *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING  *
- * BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND     *
- * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,   *
- * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, *
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.        *
- **************************************************************************************************/
+/*************************************************************************************
+ * Copyright (c) 2019 Xiaoyang Xu, Masoud Ghaffarinia, Wenhao Wang, and Kevin Hamlen *
+ * The University of Texas at Dallas                                                 *
+ *                                                                                   *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of   *
+ * this software and associated documentation files (the "Software"), to deal in     *
+ * the Software without restriction, including without limitation the rights to      *
+ * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of  *
+ * the Software, and to permit persons to whom the Software is furnished to do so,   *
+ * subject to the following conditions:                                              *
+ *                                                                                   *
+ * The above copyright notice and this permission notice shall be included in all    *
+ * copies or substantial portions of the Software.                                   *
+ *                                                                                   *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR        *
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS  *
+ * FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR    *
+ * COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER    *
+ * IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN           *
+ * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.        *
+ *************************************************************************************/
+ 
+/* This file is part of the ConFIRM test suite, whose initial documentation can be
+   found in the following publication:
 
-#include "helper.h"
+   Xiaoyang Xu, Masoud Ghaffarinia, Wenhao Wang, Kevin W. Hamlen, and Zhiqiang Lin.
+   "ConFIRM: Evaluating Compatibility and Relevance of Control-flow Integrity 
+   Protections for Modern Software."  In Proceedings of the 28th USENIX Security
+   Symposium, August 2019. */
+
+#include "setup.h"
+
+#ifdef INTEL_X86
+//
+#elif AMD64
+#error This benchmark is designed for x86 architecture only. 
+#else
+#error This benchmark contains x86-specific assembly code that may be incompatible \
+with the current hardware architecture.
+#endif 
 
 static HANDLE hChild;
 static DWORD trials, hijack_addr;
@@ -41,10 +61,10 @@ DWORD WINAPI ChildThread(LPVOID retaddr_ptr)
     if (!hijacked)
     {
         printf("All trials complete.  Hijack unsuccessful.\n");
-		// The main thread loops infinitely, so to terminate it, we use ExitProcess.
+        // The main thread loops infinitely, so to terminate it, we use ExitProcess.
         ExitProcess(0);  
     }
-	
+    
     return 0;
 }
 
@@ -61,8 +81,8 @@ int main(int argc, char* argv[])
         lea eax, [esp - 4]                // Store the address of the forthcoming return address in esp_addr.
         mov esp_addr, eax
     }
-	
-	// Spawn the child (hijacker) thread.
+    
+    // Spawn the child (hijacker) thread.
     hChild = CreateThread(          
         NULL,
         0,
@@ -87,18 +107,18 @@ int main(int argc, char* argv[])
     // If the hijacker is successful, the "ret" above will jump here.
 HIJACK:
     hijacked = 1;
-	
+    
     _asm {
         push 0    // The child thread might still be running, so push a dummy return address for it to continue hijacking.
     }
-	
+    
     printf("Hijack successful!\n");
-	
-	// Wait for the child thread to terminate normally.
+    
+    // Wait for the child thread to terminate normally.
     WaitForSingleObject(hChild, INFINITE);  
-	
-	// Pop the dummy return address.
+    
+    // Pop the dummy return address.
     _asm { pop eax }  
-	
+    
     return 0;
 }
