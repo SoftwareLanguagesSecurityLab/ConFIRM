@@ -46,7 +46,7 @@ int main()
         exit(1);
     }    
     
-    // Check weather an exported symbol can be read correctly via pointer.
+    // Check whether an exported symbol can be read correctly via pointer.
     p_exp_null = &exp_null;
     if (*p_exp_null != 0)
     {
@@ -54,7 +54,7 @@ int main()
         exit(1);
     }
     
-    // Check weather the exported symbol can still be read correctly after some weird
+    // Check whether the exported symbol can still be read correctly after some weird
     // pointer arithmetic. 
     p_exp_null ++;
     p_exp_null += (DWORD)(imp_null * 1024);
