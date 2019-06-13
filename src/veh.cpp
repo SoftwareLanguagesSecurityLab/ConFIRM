@@ -42,8 +42,8 @@ int main()
     // Register a vectored exception handler.
     pv = AddVectoredExceptionHandler(0, VectoredHandlerSkip);
 
-    // Trigger a hardware exception by writing to DS:[0] in a loop, to check if 
-	// a CFI solution being tested provides semantic transparency.
+    // Trigger a hardware exception by writing to DS:[0] in a loop, to check whether 
+    // a CFI solution being tested provides semantic transparency.
     for (long long int i = 0; i < MAX_LOOP * SEHTS; ++i)
     {
         *(unsigned int*)0x0 = 0;
@@ -61,17 +61,17 @@ LONG WINAPI VectoredHandlerSkip(struct _EXCEPTION_POINTERS *ExceptionInfo)
 {
     PCONTEXT Context;    
     Context = ExceptionInfo->ContextRecord;
-	
+    
     // Add program counter by 1
 #ifdef AMD64
-	Context->Rip = Context->Rip + 1;
+    Context->Rip = Context->Rip + 1;
 #elif defined INTEL_X86
-	Context->Eip = Context->Eip + 1;
+    Context->Eip = Context->Eip + 1;
 #else 
 #error This benchmark contains x86/x64-specific assembly code that may be \
 incompatible with the current hardware architecture.
-#endif	
-	
-	// Continue execution with the new EIP value.
+#endif    
+    
+    // Continue execution with the new EIP value.
     return EXCEPTION_CONTINUE_EXECUTION;
 }
