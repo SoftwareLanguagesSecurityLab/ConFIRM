@@ -30,11 +30,11 @@
 
 #include "setup.h"
 
-#ifdef INTEL_X86
+#ifdef AMD64
 //
-#elif AMD64
-#error This benchmark is designed for x86 architecture only. For x64, please use \
- multithreading_linux64.cpp instead.
+#elif INTEL_X86
+#error This benchmark is designed for x64 architecture only. For x86, please use \
+ multithreading_linux32.cpp instead.
 #else
 #error This benchmark contains x86/x64-specific assembly code that may be \
 incompatible with the current hardware architecture.
@@ -55,13 +55,13 @@ void *ChildThread(void * retaddr_ptr)
     // Repeatedly write <hijacktramp_addr> into the main thread's return address slot.
     // The write is attempted <trials> times.
     asm (
-        "    mov     %0, %%ecx\n\t"
+        "    movq %0, %%rcx\n\t"
         "L:"
-        "    mov     %1, (%2)\n\t"
+        "    movq %1, (%2)\n\t"
         "    loop L"
         :                                                           // OutputOperands   : A comma-separated list of the C variables modified
         : "r" (trials), "r" (hijacktramp_addr), "r" (retaddr_ptr)   // InputOperands    : A comma-separated list of C expressions read
-        : "ecx", "memory"                                           // Clobbers         : A comma-separated list of registers or other values changed
+        : "rcx", "memory"                                           // Clobbers         : A comma-separated list of registers or other values changed
     );
     
     // 0.1 second sleep for making sure hijacked has changed if it should
@@ -89,14 +89,14 @@ int main(int argc, char* argv[])
     int flag = 0;
     
     asm (
-        "    lea     HIJACKTRAMP, %%eax\n\t"
-        "    mov     %%eax, %0\n\t"
-        "    lea     -4(%%esp), %%eax\n\t"          // Store the address of the forthcoming return address in esp_addr.
-        "    mov     %%eax, %1\n\t"
+        "    leaq HIJACKTRAMP(%%rip), %%rax\n\t"
+        "    movq %%rax, %0\n\t"
+        "    leaq -8(%%rsp), %%rax\n\t"              // Store the address of the forthcoming return address in esp_addr.
+        "    movq %%rax, %1\n\t"
         "HIJACKTRAMP:"
-        : "=r" (hijacktramp_addr), "=r" (esp_addr)  // OutputOperands   : A comma-separated list of the C variables modified
-        :                                           // InputOperands    : A comma-separated list of C expressions read
-        : "eax", "memory"                           // Clobbers         : A comma-separated list of registers or other values changed
+        : "=r" (hijacktramp_addr), "=r" (esp_addr)   // OutputOperands   : A comma-separated list of the C variables modified
+        :                                            // InputOperands    : A comma-separated list of C expressions read
+        : "rax", "memory"                            // Clobbers         : A comma-separated list of registers or other values changed
     );
     
     if (flag) {
@@ -120,11 +120,11 @@ int main(int argc, char* argv[])
 
     // Repeat a guarded return in the tightest possible infinite loop.    
     asm (
-        "    lea     L2, %ebx\n\t"
+        "    leaq L2(%rip), %rbx\n\t"
         "L1:"
-        "    call    L3\n\t"
+        "    call L3\n\t"
         "L2:"
-        "    jmp     L1\n\t"
+        "    jmp L1\n\t"
         "L3:"
         "    ret"
     );
@@ -147,7 +147,7 @@ HIJACKED:
     
     // Pop the dummy return address.
     asm (
-        "pop %eax"
+        "pop %rax"
     );  
     
     return 0;
