@@ -146,9 +146,6 @@ int main()
 #endif
 
     printf("jit test passed.\n");
-
-    getchar();
-
     return 0;
 }
 
