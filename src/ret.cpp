@@ -34,7 +34,7 @@ NANOSECOND start_time;
 NANOSECOND end_time;
 NANOSECOND total_time;
 
-//A function does nothing but return
+// A function does nothing but return
 void retFunc();
 
 int main()
@@ -42,15 +42,10 @@ int main()
     // Record starting time
     start_time = get_wall_time();
 
-	// Call a function that does nothing but returns in an intensive loop.
+    // Call a function that does nothing but returns in an intensive loop.
     for (long long int i = 0; i < MAX_LOOP * RETTS; i++)
     {
-        #ifdef _WIN32
         retFunc();
-        #elif __linux__
-        __asm__ ("call retFunc");
-        #else
-        #endif
     }
 
     // Record ending time
@@ -63,17 +58,13 @@ int main()
     return 0;
 }
 
-#ifdef _WIN32
-__declspec(naked)
+#if (defined MSVC_ARCH || GNU_ARCH || CLANG_ARCH)
 void retFunc()
 {
-    __asm { ret }
+    return;
 }
-#elif __linux__
-__asm__ (
-".globl retFunc\n"
-"    .type retFunc, @function\n"
-"    retFunc:\n"
-"    ret\n");
-#else
+#else 
+#error This benchmark is designed for processor architectures supported by mainstream \ 
+compilers, including MSVC, GCC, and LLVM. To run this benchmark on other platforms, \
+users of ConFIRM can extend this source code as needed.\
 #endif
